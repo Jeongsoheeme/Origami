@@ -27,6 +27,7 @@
 <img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify-&logoColor=black"/>
 
 # ✔️ Index
+
 - [✔️ Motivation](#️-motivation)
 - [🔍 Features](#-features)
   - [✔︎ 가장 가까운 꼭지점 선택](#︎-가장-가까운-꼭지점-선택)
@@ -52,9 +53,7 @@
     - [5 - 1. 회전 구현을 위한 방법들](#5---1-회전-구현을-위한-방법들)
     - [5 - 2. 짐벌락의 해결책 쿼터니언](#5---2-짐벌락의-해결책-쿼터니언)
     - [5 - 3. 회전을 구현하기 위해 필요한 데이터들](#5---3-회전을-구현하기-위해-필요한-데이터들)
-- [✔️ React Three Fiber로 리팩토링 하려는 이유?](#️-react-three-fiber로-리팩토링-하려는-이유)
-  - [보일러플레이트 코드를 줄여서 코드의 가독성을 UP!](#보일러플레이트-코드를-줄여서-코드의-가독성을-up)
-  - [React의 hooks, context, 상태 관리 라이브러리 등을 3D 그래픽 개발에 활용할 수 있다.](#react의-hooks-context-상태-관리-라이브러리-등을-3d-그래픽-개발에-활용할-수-있다)
+  - [6. 사용자 피드백 기반으로 추가 기능 구현](#6-사용자-피드백-기반으로-추가-기능-구현)
 - [✔️ Schedules](#️-schedules)
 - [📝 회고](#-회고)
   - [이승민](#이승민)
@@ -375,69 +374,27 @@ Raycaster를 이용해 처음 닿는 면을 판별할 수 있지 않을까 생�
 
 위와 같은 방식으로, 각 단계별로 쿼터니언을 설정하고, 벡터를 회전시키며, 애니메이션 프레임을 통해 회전을 점진적으로 적용(requestAnimationFrame)하고 데이터 요소를 결합하면 정확하고 부드러운 회전 애니메이션을 구현하게 될 수 있었습니다.
 
-<p align="center">
-  <img src="README%20md%2087f0d4e93e5241c7b644c4aa97fe4e4e/Untitled.gif" width="300px" alt="Untitled2">
-</p>
+## 6. 사용자 피드백 기반으로 추가 기능 구현
 
-# ✔️ React Three Fiber로 리팩토링 하려는 이유?
+프로젝트 구현 후 사용자 피드백을 기반으로 주요 피드백 3가지 기능을 추가 구현하였습니다. <br /><br />
+**1. 마우스 오버 시 동작을 설명하는 툴팁을 공통 적용**<br />
 
-### 보일러플레이트 코드를 줄여서 코드의 가독성을 UP!
+<img width="600px" alt="스크린샷 2024-09-05 오후 4 33 23" src="https://github.com/user-attachments/assets/972db424-a800-4339-90ba-b47d8c5c8084"><br />
 
-- Three.js 사용 시 초기 설정
+사용자가 가장 불편해했던 것 중 하나가 각 버튼이 어떤 기능인지 알 수가 없어 불편하다는 점이였습니다.<br /> 이런 사용자 피드백을 기반으로 각 버튼마다 공통 툴팁을 만들어 사용자에게 설명해주었습니다.<br /> 먼저 공통 툴팁 컴포넌트를 만들어 툴팁을 적용한 태그의 data-tooltip-key 속성 값에 맞는 텍스트를 동적으로 넣어 재사용성을 높였습니다.
 
-```jsx
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+**2. 3D 종이 모델을 다양한 각도에서 쉽게 관찰할 수 있도록 카메라 조작법에 대한 가이드 추가**<br />
 
-const scene = new THREE.Scene();
+<img width="600px" alt="스크린샷 2024-09-05 오후 4 31 32" src="https://github.com/user-attachments/assets/c82c9dab-1f0d-46fc-b32e-e2e2e19e552a"><br />
 
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.z = 5;
+Three.js 기능 중 카메라가 바라보는 위치를 설정할 수 있는데 이 기능을 쉽게 알 수 없다는 피드백을 받고 가이드를 제공해야겠다는 생각을 하였습니다.<br /> 사용자가 눈길이 가는 왼쪽 상단에는 종이접기 단계를 보여주는 슬라이드를 배치하고 그 다음으로 오른쪽 상단에 카메라 가이드를 배치하여<br /> 사용자가 쉽게 카메라 조작법에 대해 인지할 수 있게 하였습니다.
 
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+**3. 사용자에게 로딩 진행 상황을 시각적으로 알리기 위해 재사용성을 고려한 로딩 컴포넌트 구현**<br />
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+<img width="600px" alt="스크린샷 2024-09-05 오후 4 34 34" src="https://github.com/user-attachments/assets/e232af54-c2b8-4808-b33d-dadec6f3cda9"><br />
 
-const light = new THREE.PointLight(0xffffff, 1, 100);
-light.position.set(0, 0, 10);
-scene.add(light);
-```
+로딩 진행 상황을 보여주는 로딩 페이지 구현을 후순위로 생각을 했었는데 사용자 피드백을 받아보니 종이접기 완료 후 시점과<br /> 갤러리 페이지로 넘어가는 시점에 3D 데이터의 로딩 및 저장 시간이 길어져 사용자가 현재 로딩이 되고 있는 것인지<br /> 아무 이벤트도 실행 되고 있지 않은 것인지 알 수가 없어 가장 많이 불편함을 느끼는 부분 중 하나였습니다.<br /> 또한 여러 페이지에서 공통으로 사용하고 있기에 재사용성을 고려하여 컴포넌트화 시켜 구현하였습니다.
 
-- React Three Fiber 사용 시 초기 설정
-
-```jsx
-import { Canvas } from '@react-three/fiber';
-
-function App() {
-  return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Box position={[-1.2, 0, 0]} />
-      <Box position={[1.2, 0, 0]} />
-    </Canvas>
-  );
-}
-```
-
-### React의 hooks, context, 상태 관리 라이브러리 등을 3D 그래픽 개발에 활용할 수 있다.
-
-- 3D 객체와 효과를 재사용 가능한 컴포넌트로 만들 수 있어 개발 효율성이 높아진다.
-- 가상 DOM(Virtual DOM) 개념이 3D 씬에도 적용되어 변경된 부분만 실제 DOM과 동기화하여 불필요한 렌더링을 줄일 수 있다.
-- 전역 상태 관리 도구를 사용해 효율적인 상태 업데이트와 렌더링하여 동적인 3D 콘텐츠를 효율적으로 관리할 수 있다.
 
 # ✔️ Schedules
 
@@ -454,6 +411,8 @@ function App() {
   - <a href="[https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=67678117](https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=67678117)">Share 버튼 클릭 시 정보 저장</a>
   - <a href="[https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=67678248](https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=67678248)">갤러리 페이지 정적화면 및 기능 구현</a>
   - <a href="[https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=69231581](https://github.com/orgs/Origami-5M/projects/1/views/4?pane=issue&itemId=69231581)">가이드모드 데이터 구축</a>
+    <br />
+    <br />
 
 # 📝 회고
 
